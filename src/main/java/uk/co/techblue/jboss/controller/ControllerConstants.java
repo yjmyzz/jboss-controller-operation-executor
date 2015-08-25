@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 Technology Blueprint Ltd
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,24 +17,26 @@ package uk.co.techblue.jboss.controller;
 
 /**
  * The JBoss AS Controller Constants.
- * 
+ *
  * @author <a href="mailto:ajay.deshwal@techblue.co.uk">Ajay Deshwal</a>
  */
 public class ControllerConstants {
 
     public static final String DATASOURCE_SUBSYSTEM = "datasources";
 
-    public static final String OPERATION_READ_RESOURCE = "read-resource";
-    public static final String OPERATION_READ_ATTRIBUTE = "read-attribute";
     public static final String OPERATION_ENABLE = "enable";
     public static final String OPERATION_DISABLE = "disable";
+    public static final String OPERATION_START = "start";
+    public static final String OPERATION_START_SERVERS = "start-servers";
+    public static final String OPERATION_STOP = "stop";
+    public static final String OPERATION_STOP_SERVERS = "stop-servers";
 
     public static final String ADDRESS_PROFILE = "profile";
-    public static final String ADDRESS_SUBSYSTEM = "subsystem";
     public static final String ADDRESS_DATASOURCE = "data-source";
-    public static final String ATTRIBUTE_ENABLED = "enabled";
 
-    public static final String GENERAL_PROPERTY_RECURSIVE = "recursive";
+    public static final String ATTRIBUTE_ENABLED = "enabled";
+    public static final String ATTRIBUTE_SERVER_STATE = "server-state";
+
 
     public static final String DS_PROPERTY_JNDINAME = "jndi-name";
     public static final String DS_PROPERTY_USEJAVACONTEXT = "use-java-context";

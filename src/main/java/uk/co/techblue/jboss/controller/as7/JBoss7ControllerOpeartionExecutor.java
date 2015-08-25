@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 Technology Blueprint Ltd
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.security.auth.callback.CallbackHandler;
-
 import org.jboss.as.controller.client.ModelControllerClient;
 import org.jboss.as.controller.client.ModelControllerClientConfiguration;
 import org.jboss.as.controller.client.OperationBuilder;
@@ -44,19 +42,23 @@ import uk.co.techblue.jboss.controller.vo.JndiDataSource;
 import uk.co.techblue.jboss.util.StringUtils;
 
 // TODO: Auto-generated Javadoc
+
 /**
  * The service to execute operations on JBoss AS 7 management model controller.
- * 
+ *
  * @author <a href="mailto:ajay.deshwal@techblue.co.uk">Ajay Deshwal</a>
+ * @follower <a href="mailto:yjmyzz@126.com">Jimmy Yang</a>
  */
 public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExecutor {
 
-    /** The logger instance. */
+    /**
+     * The logger instance.
+     */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * The main method. ONLY FOR TESTING!
-     * 
+     *
      * @param args the arguments
      */
     public static void main(String[] args) {
@@ -91,7 +93,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      * ControllerClientConfig, uk.co.techblue.jboss.controller.vo.JndiDataSource, boolean, java.lang.String[])
      */
     public void createDatasource(final ControllerClientConfig controllerClientConfig, final JndiDataSource dataSource,
-            final boolean enable, final String... serverProfileNames) throws ControllerOperationException {
+                                 final boolean enable, final String... serverProfileNames) throws ControllerOperationException {
         if (serverProfileNames != null && serverProfileNames.length > 0) {
             for (final String serverProfile : serverProfileNames) {
                 createDatasource(controllerClientConfig, dataSource, enable, serverProfile);
@@ -108,24 +110,25 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      * @see uk.co.techblue.jboss.controller.ControllerOperationExecutor#createDatasource(uk.co.techblue.jboss.controller.vo.
      * ControllerClientConfig, uk.co.techblue.jboss.controller.vo.JndiDataSource, boolean, java.lang.String)
      */
+
     /**
      * Creates the datasource.
-     * 
+     *
      * @param controllerClientConfig the controller client config
-     * @param dataSource the data source
-     * @param enable the enable
-     * @param serverProfileName the server profile name
+     * @param dataSource             the data source
+     * @param enable                 the enable
+     * @param serverProfileName      the server profile name
      * @throws ControllerOperationException the controller operation exception
      */
     private void createDatasource(final ControllerClientConfig controllerClientConfig, final JndiDataSource dataSource,
-            final boolean enable, final String serverProfileName) throws ControllerOperationException {
+                                  final boolean enable, final String serverProfileName) throws ControllerOperationException {
         final String jndiName = dataSource.getJndiName();
         final ModelNode request = new ModelNode();
         request.get(ClientConstants.OP).set(ClientConstants.ADD);
         if (StringUtils.isNotBlank(serverProfileName)) {
             request.get(ClientConstants.OP_ADDR).add(ADDRESS_PROFILE, serverProfileName);
         }
-        request.get(ClientConstants.OP_ADDR).add(ADDRESS_SUBSYSTEM, DATASOURCE_SUBSYSTEM);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SUBSYSTEM, DATASOURCE_SUBSYSTEM);
         request.get(ClientConstants.OP_ADDR).add(ADDRESS_DATASOURCE, jndiName);
 
         addDatasourceProperties(request, dataSource);
@@ -170,7 +173,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      * ControllerClientConfig, uk.co.techblue.jboss.controller.vo.JndiDataSource, java.lang.String[])
      */
     public void removeDatasource(final ControllerClientConfig controllerClientConfig, final String datasourceName,
-            final String... serverProfileNames) throws ControllerOperationException {
+                                 final String... serverProfileNames) throws ControllerOperationException {
         if (serverProfileNames != null && serverProfileNames.length > 0) {
             for (final String serverProfile : serverProfileNames) {
                 removeDatasource(controllerClientConfig, datasourceName, serverProfile);
@@ -182,20 +185,20 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Removes datasource.
-     * 
+     *
      * @param controllerClientConfig the controller client config
-     * @param datasourceName the datasource name
-     * @param serverProfileName the server profile name
+     * @param datasourceName         the datasource name
+     * @param serverProfileName      the server profile name
      * @throws ControllerOperationException the controller operation exception
      */
     private void removeDatasource(final ControllerClientConfig controllerClientConfig, final String datasourceName,
-            final String serverProfileName) throws ControllerOperationException {
+                                  final String serverProfileName) throws ControllerOperationException {
         final ModelNode request = new ModelNode();
         request.get(ClientConstants.OP).set(ClientConstants.DEPLOYMENT_REMOVE_OPERATION);
         if (StringUtils.isNotBlank(serverProfileName)) {
             request.get(ClientConstants.OP_ADDR).add(ADDRESS_PROFILE, serverProfileName);
         }
-        request.get(ClientConstants.OP_ADDR).add(ADDRESS_SUBSYSTEM, DATASOURCE_SUBSYSTEM);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SUBSYSTEM, DATASOURCE_SUBSYSTEM);
         request.get(ClientConstants.OP_ADDR).add(ADDRESS_DATASOURCE, datasourceName);
         final ModelControllerClient client = createControllerClient(controllerClientConfig);
         ModelNode response = null;
@@ -230,8 +233,8 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Creates the datasource request.
-     * 
-     * @param request the request
+     *
+     * @param request    the request
      * @param dataSource the data source
      */
     private void addDatasourceProperties(final ModelNode request, final JndiDataSource dataSource) {
@@ -275,9 +278,9 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Sets the property if not null.
-     * 
-     * @param request the request
-     * @param propertyName the property name
+     *
+     * @param request       the request
+     * @param propertyName  the property name
      * @param propertyValue the property value
      */
     private void setPropertyIfNotNull(ModelNode request, String propertyName, String propertyValue) {
@@ -288,7 +291,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Creates the controller client.
-     * 
+     *
      * @param controllerClientConfig the controller client configuration
      * @return the model controller client
      * @throws ControllerOperationException the controller operation exception
@@ -312,7 +315,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Gets the authentication callback handler.
-     * 
+     *
      * @param controllerClient the controller client
      * @return the authentication callback handler
      */
@@ -322,7 +325,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Checks if is local IP address.
-     * 
+     *
      * @param address the address
      * @return true, if is local IP address
      */
@@ -358,7 +361,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      * ControllerClientConfig, java.lang.String, java.lang.String)
      */
     public boolean isDatasourceExists(final ControllerClientConfig controllerClientConfig, final String dataSourceName,
-            final String serverProfileName) throws ControllerOperationException {
+                                      final String serverProfileName) throws ControllerOperationException {
         logger.info("Checking if datasource '{}' exists...", dataSourceName);
         final List<ModelNode> datasources = getDatasources(controllerClientConfig, serverProfileName, DatasourceStatus.ALL);
         if (datasources != null && !datasources.isEmpty()) {
@@ -385,7 +388,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      * ControllerClientConfig, java.lang.String, java.lang.String[])
      */
     public void enableDataSource(final ControllerClientConfig controllerClientConfig, final String datasourceName,
-            final String... serverProfileNames) throws ControllerOperationException {
+                                 final String... serverProfileNames) throws ControllerOperationException {
         if (serverProfileNames != null && serverProfileNames.length > 0) {
             for (final String serverProfile : serverProfileNames) {
                 enableDataSource(controllerClientConfig, datasourceName, serverProfile);
@@ -401,22 +404,23 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      * @see uk.co.techblue.jboss.controller.ControllerOperationExecutor#enableDataSource(uk.co.techblue.jboss.controller.vo.
      * ControllerClientConfig, java.lang.String, java.lang.String)
      */
+
     /**
      * Enable data source.
-     * 
+     *
      * @param controllerClientConfig the controller client config
-     * @param datasourceName the datasource name
-     * @param serverProfileName the server profile name
+     * @param datasourceName         the datasource name
+     * @param serverProfileName      the server profile name
      * @throws ControllerOperationException the controller operation exception
      */
     private void enableDataSource(final ControllerClientConfig controllerClientConfig, final String datasourceName,
-            final String serverProfileName) throws ControllerOperationException {
+                                  final String serverProfileName) throws ControllerOperationException {
         final ModelNode request = new ModelNode();
         request.get(ClientConstants.OP).set(OPERATION_ENABLE);
         if (StringUtils.isNotBlank(serverProfileName)) {
             request.get(ClientConstants.OP_ADDR).add(ADDRESS_PROFILE, serverProfileName);
         }
-        request.get(ClientConstants.OP_ADDR).add(ADDRESS_SUBSYSTEM, DATASOURCE_SUBSYSTEM);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SUBSYSTEM, DATASOURCE_SUBSYSTEM);
         request.get(ClientConstants.OP_ADDR).add(ADDRESS_DATASOURCE, datasourceName);
         ModelControllerClient client = createControllerClient(controllerClientConfig);
         ModelNode response = null;
@@ -452,7 +456,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Checks if the operation executed successfully.
-     * 
+     *
      * @param response the operation response
      * @return true, if the operation is success
      */
@@ -471,15 +475,15 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      */
     @Override
     public List<ModelNode> getDatasources(final ControllerClientConfig controllerClientConfig, final String serverProfileName,
-            final DatasourceStatus datasourceStatus) throws ControllerOperationException {
+                                          final DatasourceStatus datasourceStatus) throws ControllerOperationException {
 
         final ModelNode request = new ModelNode();
-        request.get(ClientConstants.OP).set(OPERATION_READ_RESOURCE);
+        request.get(ClientConstants.OP).set(ClientConstants.READ_RESOURCE_OPERATION);
         if (StringUtils.isNotBlank(serverProfileName)) {
             request.get(ClientConstants.OP_ADDR).add(ADDRESS_PROFILE, serverProfileName);
         }
-        request.get(GENERAL_PROPERTY_RECURSIVE).set(false);
-        request.get(ClientConstants.OP_ADDR).add(ADDRESS_SUBSYSTEM, DATASOURCE_SUBSYSTEM);
+        request.get(ClientConstants.RECURSIVE).set(false);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SUBSYSTEM, DATASOURCE_SUBSYSTEM);
 
         final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
         ModelNode response = null;
@@ -523,15 +527,15 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Gets the filtered data sources.
-     * 
+     *
      * @param controllerClientConfig the controller client config
-     * @param datasourceStatus the datasource status
-     * @param datasourceList the datasource list
+     * @param datasourceStatus       the datasource status
+     * @param datasourceList         the datasource list
      * @return the filtered data sources
      * @throws ControllerOperationException the controller operation exception
      */
     private List<ModelNode> getFilteredDataSources(final ControllerClientConfig controllerClientConfig,
-            final DatasourceStatus datasourceStatus, final List<ModelNode> datasourceList) throws ControllerOperationException {
+                                                   final DatasourceStatus datasourceStatus, final List<ModelNode> datasourceList) throws ControllerOperationException {
 
         List<ModelNode> datasources = null;
         if (datasourceList == null || datasourceList.isEmpty()) {
@@ -556,14 +560,14 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      * ControllerClientConfig, java.lang.String, java.lang.String)
      */
     public boolean isDatasourceEnabled(final ControllerClientConfig controllerClientConfig, final String serverProfileName,
-            final String datasource) throws ControllerOperationException {
+                                       final String datasource) throws ControllerOperationException {
         final ModelNode request = new ModelNode();
-        request.get(ClientConstants.OP).set(OPERATION_READ_ATTRIBUTE);
+        request.get(ClientConstants.OP).set(ClientConstants.READ_ATTRIBUTE_OPERATION);
         if (StringUtils.isNotBlank(serverProfileName)) {
             request.get(ClientConstants.OP_ADDR).add(ADDRESS_PROFILE, serverProfileName);
         }
-        request.get(GENERAL_PROPERTY_RECURSIVE).set(false);
-        request.get(ClientConstants.OP_ADDR).add(ADDRESS_SUBSYSTEM, DATASOURCE_SUBSYSTEM);
+        request.get(ClientConstants.RECURSIVE).set(false);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SUBSYSTEM, DATASOURCE_SUBSYSTEM);
         request.get(ClientConstants.OP_ADDR).add(ADDRESS_DATASOURCE, datasource);
         request.get(ClientConstants.NAME).set(ATTRIBUTE_ENABLED);
         final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
@@ -604,7 +608,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      */
     @Override
     public void disableDataSource(ControllerClientConfig controllerClientConfig, String datasourceName,
-            String... serverProfileNames) throws ControllerOperationException {
+                                  String... serverProfileNames) throws ControllerOperationException {
         if (serverProfileNames != null && serverProfileNames.length > 0) {
             for (final String serverProfile : serverProfileNames) {
                 disableDataSource(controllerClientConfig, datasourceName, serverProfile);
@@ -616,21 +620,21 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     /**
      * Disable data source.
-     * 
+     *
      * @param controllerClientConfig the controller client config
-     * @param datasourceName the datasource name
-     * @param serverProfileName the server profile name
+     * @param datasourceName         the datasource name
+     * @param serverProfileName      the server profile name
      * @throws ControllerOperationException the controller operation exception
      */
     private void disableDataSource(final ControllerClientConfig controllerClientConfig, final String datasourceName,
-            final String serverProfileName) throws ControllerOperationException {
+                                   final String serverProfileName) throws ControllerOperationException {
 
         final ModelNode request = new ModelNode();
         request.get(ClientConstants.OP).set(OPERATION_DISABLE);
         if (StringUtils.isNotBlank(serverProfileName)) {
             request.get(ClientConstants.OP_ADDR).add(ADDRESS_PROFILE, serverProfileName);
         }
-        request.get(ClientConstants.OP_ADDR).add(ADDRESS_SUBSYSTEM, DATASOURCE_SUBSYSTEM);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SUBSYSTEM, DATASOURCE_SUBSYSTEM);
         request.get(ClientConstants.OP_ADDR).add(ADDRESS_DATASOURCE, datasourceName);
         ModelControllerClient client = createControllerClient(controllerClientConfig);
         ModelNode response = null;
@@ -673,7 +677,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      */
     @Override
     public void enableDataSources(final ControllerClientConfig controllerClientConfig, final List<String> dataSourceNames,
-            final String... serverProfileNames) throws ControllerOperationException {
+                                  final String... serverProfileNames) throws ControllerOperationException {
         if (dataSourceNames == null || dataSourceNames.isEmpty()) {
             throw new IllegalArgumentException("Datasource list cannot be blank or null.");
         }
@@ -691,7 +695,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
      */
     @Override
     public void disableDataSources(final ControllerClientConfig controllerClientConfig, final List<String> dataSourceNames,
-            final String... serverProfileNames) throws ControllerOperationException {
+                                   final String... serverProfileNames) throws ControllerOperationException {
         if (dataSourceNames == null || dataSourceNames.isEmpty()) {
             throw new IllegalArgumentException("Datasource list cannot be blank or null.");
         }
@@ -701,12 +705,12 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
 
     }
 
-    
+
     /* (non-Javadoc)
      * @see uk.co.techblue.jboss.controller.ControllerOperationExecutor#createDatasources(uk.co.techblue.jboss.controller.vo.ControllerClientConfig, java.util.List, boolean, java.lang.String[])
      */
     public void createDatasources(final ControllerClientConfig controllerClientConfig, final List<JndiDataSource> dataSources,
-            final boolean enable, final String... serverProfileNames) throws ControllerOperationException {
+                                  final boolean enable, final String... serverProfileNames) throws ControllerOperationException {
 
         if (dataSources == null || dataSources.isEmpty()) {
             throw new IllegalArgumentException("Datasource list cannot be blank or null.");
@@ -718,7 +722,7 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
                 addedDatasourceNames.add(dataSource.getName());
             } catch (ControllerOperationException coe) {
                 try {
-                    if(!addedDatasourceNames.isEmpty()){
+                    if (!addedDatasourceNames.isEmpty()) {
                         removeDatasources(controllerClientConfig, addedDatasourceNames, serverProfileNames);
                     }
                 } catch (ControllerOperationException coexp) {
@@ -729,12 +733,12 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
         }
     }
 
-    
+
     /* (non-Javadoc)
      * @see uk.co.techblue.jboss.controller.ControllerOperationExecutor#removeDatasources(uk.co.techblue.jboss.controller.vo.ControllerClientConfig, java.util.List, java.lang.String[])
      */
     public void removeDatasources(final ControllerClientConfig controllerClientConfig, final List<String> datasourceNames,
-            final String... serverProfileNames) throws ControllerOperationException {
+                                  final String... serverProfileNames) throws ControllerOperationException {
 
         if (datasourceNames == null || datasourceNames.isEmpty()) {
             throw new IllegalArgumentException("Datasource list cannot be blank or null.");
@@ -742,5 +746,264 @@ public class JBoss7ControllerOpeartionExecutor implements ControllerOperationExe
         for (final String datasourceName : datasourceNames) {
             removeDatasource(controllerClientConfig, datasourceName, serverProfileNames);
         }
+    }
+
+    @Override
+    public List<ModelNode> getServers(ControllerClientConfig controllerClientConfig, String host) throws ControllerOperationException {
+        final ModelNode request = new ModelNode();
+        request.get(ClientConstants.OP).set(ClientConstants.READ_RESOURCE_OPERATION);
+        request.get(ClientConstants.RECURSIVE).set(false);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.HOST, host);
+
+        final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
+        ModelNode response = null;
+        try {
+            response = controllerClient.execute(new OperationBuilder(request).build());
+        } catch (IOException ioe) {
+            throw new ControllerOperationException(
+                    "An error occurred while executing operation on JBoss controller to get the servers", ioe);
+        } finally {
+            try {
+                controllerClient.close();
+            } catch (IOException ioe) {
+                logger.error("An error occurred while closing JBoss Controller client connection with host "
+                        + controllerClientConfig.getHost() + " at port " + controllerClientConfig.getPort()
+                        + " during the process of getting all the servers", ioe);
+            }
+        }
+        if (!isOperationSuccess(response)) {
+            if (!response.isDefined()) {
+                throw new ControllerOperationException(
+                        "undefined response status recieved while getting servers. Most probably the "
+                                + ClientConstants.HOST + " " + ClientConstants.SERVER_CONFIG + " is not defined.");
+            }
+            throw new ControllerOperationException("An error thrown from JBoss controller while getting servers.\n"
+                    + response.get(ClientConstants.FAILURE_DESCRIPTION).asString());
+
+        }
+        final ModelNode servers = response.get(ClientConstants.RESULT).get(ClientConstants.SERVER_CONFIG);
+        if (servers.isDefined()) {
+            return servers.asList();
+        } else {
+            throw new ControllerOperationException(
+                    "undefined response status recieved while getting servers. Most probably the "
+                            + ClientConstants.HOST + " " + ClientConstants.SERVER_CONFIG + " is not defined.");
+        }
+    }
+
+    @Override
+    public ModelNode startServer(ControllerClientConfig controllerClientConfig, String host, String serverName) throws ControllerOperationException {
+        final ModelNode request = new ModelNode();
+        request.get(ClientConstants.OP).set(OPERATION_START);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.HOST, host);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SERVER_CONFIG, serverName);
+
+        final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
+        ModelNode response = null;
+        try {
+            response = controllerClient.execute(new OperationBuilder(request).build());
+        } catch (IOException ioe) {
+            throw new ControllerOperationException(
+                    "An error occurred while executing operation on JBoss controller to start server", ioe);
+        } finally {
+            try {
+                controllerClient.close();
+            } catch (IOException ioe) {
+                logger.error("An error occurred while closing JBoss Controller client connection with host "
+                        + controllerClientConfig.getHost() + " at port " + controllerClientConfig.getPort()
+                        + " during the process of start server", ioe);
+            }
+        }
+        if (!isOperationSuccess(response)) {
+            if (!response.isDefined()) {
+                throw new ControllerOperationException(
+                        "undefined response status recieved while starting server. Most probably the "
+                                + ClientConstants.HOST + " " + serverName + " is not defined.");
+            }
+            throw new ControllerOperationException("An error thrown from JBoss controller while starting server.\n"
+                    + response.get(ClientConstants.FAILURE_DESCRIPTION).asString());
+
+        }
+        return response.get(ClientConstants.RESULT);
+    }
+
+    @Override
+    public ModelNode stopServer(ControllerClientConfig controllerClientConfig, String host, String serverName) throws ControllerOperationException {
+        final ModelNode request = new ModelNode();
+        request.get(ClientConstants.OP).set(OPERATION_STOP);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.HOST, host);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SERVER_CONFIG, serverName);
+
+        final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
+        ModelNode response = null;
+        try {
+            response = controllerClient.execute(new OperationBuilder(request).build());
+        } catch (IOException ioe) {
+            throw new ControllerOperationException(
+                    "An error occurred while executing operation on JBoss controller to start server", ioe);
+        } finally {
+            try {
+                controllerClient.close();
+            } catch (IOException ioe) {
+                logger.error("An error occurred while closing JBoss Controller client connection with host "
+                        + controllerClientConfig.getHost() + " at port " + controllerClientConfig.getPort()
+                        + " during the process of start server", ioe);
+            }
+        }
+        if (!isOperationSuccess(response)) {
+            if (!response.isDefined()) {
+                throw new ControllerOperationException(
+                        "undefined response status recieved while starting server. Most probably the "
+                                + ClientConstants.HOST + " " + serverName + " is not defined.");
+            }
+            throw new ControllerOperationException("An error thrown from JBoss controller while starting server.\n"
+                    + response.get(ClientConstants.FAILURE_DESCRIPTION).asString());
+
+        }
+        return response.get(ClientConstants.RESULT);
+    }
+
+    @Override
+    public ModelNode getServerState(ControllerClientConfig controllerClientConfig, String host, String serverName) throws ControllerOperationException {
+        final ModelNode request = new ModelNode();
+        request.get(ClientConstants.OP).set(ClientConstants.READ_ATTRIBUTE_OPERATION);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.HOST, host);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SERVER, serverName);
+        request.get(ClientConstants.NAME).set(ATTRIBUTE_SERVER_STATE);
+
+        final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
+        ModelNode response = null;
+        try {
+            response = controllerClient.execute(new OperationBuilder(request).build());
+        } catch (IOException ioe) {
+            throw new ControllerOperationException(
+                    "An error occurred while executing operation on JBoss controller to get server state", ioe);
+        } finally {
+            try {
+                controllerClient.close();
+            } catch (IOException ioe) {
+                logger.error("An error occurred while closing JBoss Controller client connection with host "
+                        + controllerClientConfig.getHost() + " at port " + controllerClientConfig.getPort()
+                        + " during the process of get server state", ioe);
+            }
+        }
+        if (!isOperationSuccess(response)) {
+            if (!response.isDefined()) {
+                throw new ControllerOperationException(
+                        "undefined response status recieved while getting server state. Most probably the "
+                                + ClientConstants.HOST + " " + serverName + " is not defined.");
+            }
+            throw new ControllerOperationException("An error thrown from JBoss controller while getting server state.Most probably the server is stopped.\n"
+                    + response.get(ClientConstants.FAILURE_DESCRIPTION).asString());
+
+        }
+        return response.get(ClientConstants.RESULT);
+    }
+
+    @Override
+    public ModelNode getServerStatus(ControllerClientConfig controllerClientConfig, String host, String serverName) throws ControllerOperationException {
+        final ModelNode request = new ModelNode();
+        request.get(ClientConstants.OP).set(ClientConstants.READ_ATTRIBUTE_OPERATION);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.HOST, host);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SERVER_CONFIG, serverName);
+        request.get(ClientConstants.NAME).set(ClientConstants.STATUS);
+
+        final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
+        ModelNode response = null;
+        try {
+            response = controllerClient.execute(new OperationBuilder(request).build());
+        } catch (IOException ioe) {
+            throw new ControllerOperationException(
+                    "An error occurred while executing operation on JBoss controller to get server status", ioe);
+        } finally {
+            try {
+                controllerClient.close();
+            } catch (IOException ioe) {
+                logger.error("An error occurred while closing JBoss Controller client connection with host "
+                        + controllerClientConfig.getHost() + " at port " + controllerClientConfig.getPort()
+                        + " during the process of get server status", ioe);
+            }
+        }
+        if (!isOperationSuccess(response)) {
+            if (!response.isDefined()) {
+                throw new ControllerOperationException(
+                        "undefined response status recieved while getting server status. Most probably the "
+                                + ClientConstants.HOST + " " + serverName + " is not defined.");
+            }
+            throw new ControllerOperationException("An error thrown from JBoss controller while getting server status.\n"
+                    + response.get(ClientConstants.FAILURE_DESCRIPTION).asString());
+
+        }
+        return response.get(ClientConstants.RESULT);
+    }
+
+    @Override
+    public ModelNode startServerGroup(ControllerClientConfig controllerClientConfig, String serverGroup) throws ControllerOperationException {
+        final ModelNode request = new ModelNode();
+        request.get(ClientConstants.OP).set(OPERATION_START_SERVERS);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SERVER_GROUP, serverGroup);
+
+        final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
+        ModelNode response = null;
+        try {
+            response = controllerClient.execute(new OperationBuilder(request).build());
+        } catch (IOException ioe) {
+            throw new ControllerOperationException(
+                    "An error occurred while executing operation on JBoss controller to start all server of group", ioe);
+        } finally {
+            try {
+                controllerClient.close();
+            } catch (IOException ioe) {
+                logger.error("An error occurred while closing JBoss Controller client connection with host "
+                        + controllerClientConfig.getHost() + " at port " + controllerClientConfig.getPort()
+                        + " during the process of start all server of group", ioe);
+            }
+        }
+        if (!isOperationSuccess(response)) {
+            if (!response.isDefined()) {
+                throw new ControllerOperationException(
+                        "undefined response status recieved while starting all server of group. Most probably the "
+                                + ClientConstants.HOST + " " + serverGroup + " is not defined.");
+            }
+            throw new ControllerOperationException("An error thrown from JBoss controller while starting all server of group.\n"
+                    + response.get(ClientConstants.FAILURE_DESCRIPTION).asString());
+
+        }
+        return response.get(ClientConstants.OUTCOME);
+    }
+
+    @Override
+    public ModelNode stopServerGroup(ControllerClientConfig controllerClientConfig, String serverGroup) throws ControllerOperationException {
+        final ModelNode request = new ModelNode();
+        request.get(ClientConstants.OP).set(OPERATION_STOP_SERVERS);
+        request.get(ClientConstants.OP_ADDR).add(ClientConstants.SERVER_GROUP, serverGroup);
+
+        final ModelControllerClient controllerClient = createControllerClient(controllerClientConfig);
+        ModelNode response = null;
+        try {
+            response = controllerClient.execute(new OperationBuilder(request).build());
+        } catch (IOException ioe) {
+            throw new ControllerOperationException(
+                    "An error occurred while executing operation on JBoss controller to start all server of group", ioe);
+        } finally {
+            try {
+                controllerClient.close();
+            } catch (IOException ioe) {
+                logger.error("An error occurred while closing JBoss Controller client connection with host "
+                        + controllerClientConfig.getHost() + " at port " + controllerClientConfig.getPort()
+                        + " during the process of start all server of group", ioe);
+            }
+        }
+        if (!isOperationSuccess(response)) {
+            if (!response.isDefined()) {
+                throw new ControllerOperationException(
+                        "undefined response status recieved while starting all server of group. Most probably the "
+                                + ClientConstants.HOST + " " + serverGroup + " is not defined.");
+            }
+            throw new ControllerOperationException("An error thrown from JBoss controller while starting all server of group.\n"
+                    + response.get(ClientConstants.FAILURE_DESCRIPTION).asString());
+
+        }
+        return response.get(ClientConstants.OUTCOME);
     }
 }
