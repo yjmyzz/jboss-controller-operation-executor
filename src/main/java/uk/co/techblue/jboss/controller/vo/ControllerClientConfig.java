@@ -170,7 +170,7 @@ public class ControllerClientConfig {
     /**
      * Sets the ssl context.
      * 
-     * @param sSLContext the new ssl context
+     * @param sslContext the new ssl context
      */
     public void setSslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
